@@ -1,3 +1,4 @@
+bin/jsonrpc-simple
 Changes
 lib/JSON/RPC/Simple.pm
 lib/JSON/RPC/Simple/Client.pm

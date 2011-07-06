@@ -1,5 +1,12 @@
 Revision history for Perl extension JSON::RPC::Simple.
 
+0.03  Fri Jun 3 2011
+    - Corrected faulty MANIFEST
+    
+0.02  Fri Jun 3 2011
+    - When dumping response don't add \n before and after actual data.
+    - Added jsonrpc-simple client util which is a really simple key/value JSON caller
+    
 0.01  Tue May  4 10:55:49 2010
 	- original version; created by h2xs 1.23 with options
 		-X -n JSON::RPC::Simple -b 5.8.0

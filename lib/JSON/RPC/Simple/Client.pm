@@ -76,7 +76,7 @@ sub AUTOLOAD {
     my $result;
     eval {
         my $content = $r->decoded_content;
-        print STDERR "Raw content: '\n${content}\n'\n" if $self->{debug};
+        print STDERR "Raw content: '${content}}'\n" if $self->{debug};
         $result = $self->{json}->decode($r->decoded_content);
     };
     die $@ if $@;
