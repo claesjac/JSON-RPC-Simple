@@ -213,7 +213,7 @@ sub handle {
     my $check_attrs;
     if ($cv) {
         # Check that it's a JSONRpcMethod
-        my @attrs = attributes::get($cv);
+        my @attrs = JSON::RPC::Simple->fetch_method_arguments($cv);
         unless (@attrs) {
             $self->{errstr} = "Procedure not found";
             return $self->_error(

@@ -31,7 +31,7 @@ sub dispatch_to {
 {    
     my %method_attributes;
 
-    sub FETCH_CODE_ATTRIBUTES {
+    sub fetch_method_arguments {
         my ($pkg, $code) = @_;
 
         return unless exists $method_attributes{refaddr $code};
