@@ -5,10 +5,15 @@ use warnings;
 
 use LWP::UserAgent;
 use JSON qw();
+use URI::Escape qw();
 
 require JSON::RPC::Simple;
 
 use constant DEFAULT_TIMEOUT => 180;
+use constant JSON_RPC_HTTP_HEADERS => (
+    Content_Type        => "application/json; charset=UTF-8",
+    Accept              => 'application/json',
+);
 
 sub new {
     my ($pkg, $uri, $attrs) = @_;
@@ -27,11 +32,17 @@ sub new {
         ),
     );
     
+    my $get = $attrs->{GET};
+
+    # Since the last component in GET call is the method name make sure we have a separator
+    $uri .= "/" if $get && substr($uri, -1, 1) ne '/';
+    
     my $self = bless {
         json => JSON->new->utf8,
         %$attrs,
         ua  => $ua,
         uri => $uri,
+        GET => $get,
     }, $pkg;
 
     return $self;
@@ -51,20 +62,34 @@ sub AUTOLOAD {
     $method =~ s/.*:://;
     
     my $id = ++$next_request_id;
-
-    my $content = $self->{json}->encode({
-        version => "1.1",
-        method  => $method,
-        params  => $params,
-        id      => $id,
-    });
     
-    my $r = $self->{ua}->post(
-        $self->{uri},
-        Content_Type        => "application/json; charset=UTF-8",
-        Accept              => 'application/json',
-        Content             => $content,
-    );
+    my $r;
+    
+    unless ($self->{GET}) {
+        my $content = $self->{json}->encode({
+            version => "1.1",
+            method  => $method,
+            params  => $params,
+            id      => $id,
+        });
+
+        $r = $self->{ua}->post(
+            $self->{uri},
+            JSON_RPC_HTTP_HEADERS,
+            Content => $content,
+        );
+    }
+    else {
+        
+        my $params = join "&", map { "$_=" . URI::Escape::uri_escape_utf8($params->{$_}) } keys %$params;
+
+        my $request_uri = $self->{uri} . $method . '?' . ${params};
+    
+        $r = $self->{ua}->get(
+            $request_uri,
+            JSON_RPC_HTTP_HEADERS,            
+        );
+    }
     
     if ($r->is_success) {
         die "Bad response" unless $r->content_type =~ m{^application/json};
@@ -120,6 +145,11 @@ Creates a new client whos endpoint is given in I<URL>.
 Valid options:
 
 =over 4
+
+=item GET
+
+Set this to a true value to do calls via HTTP GET instead of POST as some services 
+apparently think this is a good idea.
 
 =item agent
 
