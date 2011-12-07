@@ -1,13 +1,12 @@
 package JSON::RPC::Simple;
 
-use 5.008000;
 use strict;
 use warnings;
 
 use Scalar::Util qw(blessed refaddr);
 use Carp qw(croak);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 our $ClientClass = "JSON::RPC::Simple::Client";
 sub connect {
@@ -118,8 +117,6 @@ supports a subset of the specification.
 It supports
 
 =over 4
-
-=item HTTP POST only
 
 =item Named and positonal arguments
 

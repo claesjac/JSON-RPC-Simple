@@ -1,6 +1,6 @@
 Revision history for Perl extension JSON::RPC::Simple.
 
-0.04  ...
+0.04  Wed Dec 7 2011
     - Support for calls via HTTP GET
     - t/03-client.t now doesn't fail because of faulty URL
     
