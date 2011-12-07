@@ -80,7 +80,9 @@ sub AUTOLOAD {
         );
     }
     else {
-        
+        die "GET only supports named parameters" if $params && ref $params ne 'HASH';
+        $params = {} unless $params;
+            
         my $params = join "&", map { "$_=" . URI::Escape::uri_escape_utf8($params->{$_}) } keys %$params;
 
         my $request_uri = $self->{uri} . $method . '?' . ${params};
