@@ -3,6 +3,7 @@ package JSON::RPC::Simple::Client;
 use strict;
 use warnings;
 
+use Carp qw(croak);
 use LWP::UserAgent;
 use JSON qw();
 use URI::Escape qw();
@@ -80,7 +81,7 @@ sub AUTOLOAD {
         );
     }
     else {
-        die "GET only supports named parameters" if $params && ref $params ne 'HASH';
+        croak "GET only supports named parameters" if $params && ref $params ne 'HASH';
         $params = {} unless $params;
             
         my $params = join "&", map { "$_=" . URI::Escape::uri_escape_utf8($params->{$_}) } keys %$params;
@@ -94,10 +95,10 @@ sub AUTOLOAD {
     }
     
     if ($r->is_success) {
-        die "Bad response" unless $r->content_type =~ m{^application/json};
+        croak "Bad response" unless $r->content_type =~ m{^application/json};
     }
     else {
-        die $r->decoded_content unless $r->content_type =~ m{^application/json};        
+        croak $r->decoded_content unless $r->content_type =~ m{^application/json};        
     }
   
     my $result;
@@ -106,9 +107,9 @@ sub AUTOLOAD {
         print STDERR "Raw content: '${content}}'\n" if $self->{debug};
         $result = $self->{json}->decode($r->decoded_content);
     };
-    die $@ if $@;
-    die "Didn't get a JSON object back" unless ref $result eq "HASH";
-    die $result->{error}->{message} if $result->{error};
+    croak $@ if $@;
+    croak "Didn't get a JSON object back" unless ref $result eq "HASH";
+    croak $result->{error}->{message} if $result->{error};
 
     return $result->{result};
 }
