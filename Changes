@@ -1,5 +1,8 @@
 Revision history for Perl extension JSON::RPC::Simple.
 
+0.05  ...
+    - Added a sample PSGI handler which loads service based on URI and dispatches them
+    
 0.04  Wed Dec 7 2011
     - Support for calls via HTTP GET
     - t/03-client.t now doesn't fail because of faulty URL

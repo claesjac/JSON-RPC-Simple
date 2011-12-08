@@ -1,5 +1,7 @@
 bin/jsonrpc-simple
 Changes
+eg/MyService.pm
+eg/json-rpc-simple.psgi
 lib/JSON/RPC/Simple.pm
 lib/JSON/RPC/Simple/Client.pm
 lib/JSON/RPC/Simple/Dispatcher.pm

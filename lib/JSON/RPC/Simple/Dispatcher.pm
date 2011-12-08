@@ -286,6 +286,11 @@ sub handle {
     return $response;
 }
 
+sub target {
+    my ($self, $target) = @_;
+    return $self->{target}->{$target};
+}
+
 1;
 
 =head1 NAME
