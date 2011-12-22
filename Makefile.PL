@@ -16,5 +16,5 @@ WriteMakefile(
     ABSTRACT_FROM   => "lib/JSON/RPC/Simple.pm",
     AUTHOR          => "Claes Jakobsson <claesjac\@cpan.org>",
     LICENSE         => "perl",
-    EXE_FILES       => [qw(bin/jsonrpc-simple)],
+    EXE_FILES       => [qw(bin/jsonrpc-simple eg/json-rpc-simple.psgi)],
 );
