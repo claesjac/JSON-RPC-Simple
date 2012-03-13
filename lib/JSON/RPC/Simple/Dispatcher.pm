@@ -140,7 +140,17 @@ sub handle {
         return $self->_error($request, undef, 0, $self->errstr);
     }
 
-    unless (defined $request->content_length) {
+    # Some requests, like HTTP::Request lazy load content_length so we can't ->can("") it which is why the eval
+    my $content_length = eval { $request->content_length };
+    if ($@) {
+        # Apache2::RequestReq
+        $content_length = $request->headers_in->{'Content-Length'} if $request->can("headers_in");
+        
+        # Fallback
+        $content_length = $request->headers->{'Content-Length'} if !defined $content_length && $request->can("headers");
+    };
+    
+    unless (defined $content_length) {
         $self->{errstr} = 
             "JSON-RPC 1.1 requires header Content-Length to be specified";
         return $self->_error($request, undef, 0, $self->errstr);
