@@ -65,7 +65,8 @@ sub AUTOLOAD {
     my $id = ++$next_request_id;
     
     my $r;
-    
+
+    my $sent = '';
     unless ($self->{GET}) {
         my $content = $self->{json}->encode({
             version => "1.1",
@@ -73,6 +74,7 @@ sub AUTOLOAD {
             params  => $params,
             id      => $id,
         });
+        $sent = $content;
 
         $r = $self->{ua}->post(
             $self->{uri},
@@ -95,7 +97,9 @@ sub AUTOLOAD {
     }
     
     if ($r->is_success) {
-        croak "Bad response" unless $r->content_type =~ m{^application/json};
+        if ($r->content_type !~ /application\/json/) {
+            croak("Bad response. Response was not type 'application/json'\n\nResponse:\n" . $r->decoded_content);
+        }
     }
     else {
         croak $r->decoded_content unless $r->content_type =~ m{^application/json};        
@@ -104,7 +108,14 @@ sub AUTOLOAD {
     my $result;
     eval {
         my $content = $r->decoded_content;
-        print STDERR "Raw content: '${content}}'\n" if $self->{debug};
+
+        if ($self->{debug}) {
+            print STDERR "RPC-Server: " . $self->{uri} . "\n\n";
+            print STDERR "Sent: $sent\n";
+            print STDERR "Recv: " . $r->decoded_content . "\n";
+            print STDERR "\n";
+        }
+
         $result = $self->{json}->decode($r->decoded_content);
     };
     croak $@ if $@;
