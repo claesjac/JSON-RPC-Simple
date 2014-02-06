@@ -97,7 +97,9 @@ sub AUTOLOAD {
     }
     
     if ($r->is_success) {
-        croak "Bad response. Response was not type 'application/json'" unless $r->content_type =~ m{^application/json};
+        if ($r->content_type !~ /application\/json/) {
+            croak("Bad response. Response was not type 'application/json'\n\nResponse:\n" . $r->decoded_content);
+        }
     }
     else {
         croak $r->decoded_content unless $r->content_type =~ m{^application/json};        
