@@ -1,5 +1,8 @@
 Revision history for Perl extension JSON::RPC::Simple.
 
+0.06  Thu Feb 6 2013
+    - Improved error and debug reporting (Scott Baker)
+ 
 0.05  Tue Mar 13 2012
     - Added a sample PSGI handler which loads service based on URI and dispatches them
     - Wrap the content_length check in an eval and fallback to other methods of getting that
