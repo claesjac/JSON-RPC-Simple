@@ -55,9 +55,11 @@ sub DESTROY {
 
 my $next_request_id = 0;
 
+# Store the previous history of attempted object calls
+my @breadcrumbs = ();
 our $AUTOLOAD;
 sub AUTOLOAD {
-    my ($self, $params) = @_;
+    my ($self, @params) = @_;
 
     my $method = $AUTOLOAD;
     $method =~ s/.*:://;
@@ -65,6 +67,30 @@ sub AUTOLOAD {
     my $id = ++$next_request_id;
     
     my $r;
+
+	# Store the method name that was called
+	push(@breadcrumbs,$method);
+
+	# $obj->foo->bar->baz
+	# foo and bar = sub objects
+	# baz = final method
+
+	# If there are no params it was a sub-object
+	if (!@params) {
+		return $self;
+	}
+
+	# If we get this far there are some parameters
+	# so we do the actual method call
+	$method = join(".",@breadcrumbs);
+
+	# Reset breadcrumbs for the next call
+	@breadcrumbs = ();
+
+	my $params = \@params;
+	if (scalar(@params) == 1) {
+		$params = $params[0];
+	}
 
     my $sent = '';
     unless ($self->{GET}) {
